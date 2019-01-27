@@ -1,0 +1,28 @@
+#!/usr/bin/env node
+
+const qrcode = require("qrcode-terminal");
+const fs = require("fs");
+const path = require("path");
+const querystring = require("querystring");
+
+const [,, ...args] = process.argv;
+
+if(args.length !== 1) {
+    console.error("Usage: textwell-action <file>");
+    process.exit(1);
+}
+
+const [title,] = path.basename(args[0]).split(".");
+
+fs.readFile(args[0], "utf8", (err, source) => {
+    if (err) throw err;
+
+    const qs = querystring.stringify({
+        title,
+        source
+    });
+
+    qrcode.generate(`textwell:///importAction?${qs}`, {
+        small: true,
+    });
+})
